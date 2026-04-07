@@ -1,5 +1,4 @@
 import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -197,6 +196,8 @@ app.use('/api', async (req, res, next) => {
   // Vite middleware for development
   async function setupFrontend() {
     if (process.env.NODE_ENV !== 'production' && !isVercel) {
+      const viteName = 'vite';
+      const { createServer: createViteServer } = await import(viteName);
       const vite = await createViteServer({
         server: { middlewareMode: true },
         appType: 'spa',
