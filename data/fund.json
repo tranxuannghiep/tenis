@@ -1,0 +1,20 @@
+[
+  {
+    "date": "2026-04-07T03:51:04.556Z",
+    "amount": 49050000,
+    "description": "Tổng Quỹ Từ trước tới nay",
+    "category": "Contribution",
+    "type": "income",
+    "year": 2026,
+    "id": "1775533864874"
+  },
+  {
+    "date": "2026-04-07T03:51:40.946Z",
+    "amount": 44330000,
+    "description": "- Năm 2025: 6,100,000 - Liên hoan - Năm 2025: 1,000,000 - Viếng Thầy Thuyên - Năm 2025: 12,000,000 - Nộp ban quản trị 12 tháng tiền điện - còn 2 tr - Năm 2025: 6,050,000 - Liên hoan 17/5/2025 - Năm 2025: 180,000 - Tiền bóng điện - Năm 2025: 200,000 - Tiền nước thi đấu - Năm 2024: 6,800,000 - Tiền ăn liên hoan 2024 - Năm 2024: 4,500,000 - Liên hoan - Năm 2024: 7,500,000 - Thay mặt bàn",
+    "category": "Other",
+    "type": "expense",
+    "year": 2026,
+    "id": "1775533900947"
+  }
+]

@@ -1,0 +1,5 @@
+{
+  "name": "Table Tennis Team Manager",
+  "description": "A comprehensive app for managing members, match betting (in beers), and annual fund tracking for a table tennis team.",
+  "requestFramePermissions": []
+}
