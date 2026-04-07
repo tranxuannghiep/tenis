@@ -3,11 +3,13 @@ import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DATA_DIR = path.join(__dirname, 'data');
+const isVercel = !!process.env.VERCEL;
+const DATA_DIR = isVercel ? path.join(os.tmpdir(), 'data') : path.join(__dirname, 'data');
 const MEMBERS_FILE = path.join(DATA_DIR, 'members.json');
 const FUND_FILE = path.join(DATA_DIR, 'fund.json');
 const MATCHES_FILE = path.join(DATA_DIR, 'matches.json');
@@ -44,15 +46,18 @@ async function ensureDataFiles() {
   }
 }
 
-async function startServer() {
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+// Ensure data files exist before processing any API request
+app.use('/api', async (req, res, next) => {
   await ensureDataFiles();
+  next();
+});
 
-  const app = express();
-  const PORT = 3000;
-
-  app.use(express.json());
-
-  // API Routes
+// API Routes
   app.get('/api/members', async (req, res) => {
     const data = await fs.readFile(MEMBERS_FILE, 'utf-8');
     res.json(JSON.parse(data));
@@ -190,23 +195,28 @@ async function startServer() {
   });
 
   // Vite middleware for development
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
+  async function setupFrontend() {
+    if (process.env.NODE_ENV !== 'production' && !isVercel) {
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+    } else {
+      const distPath = path.join(process.cwd(), 'dist');
+      app.use(express.static(distPath));
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(distPath, 'index.html'));
+      });
+    }
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  setupFrontend().then(() => {
+    if (!isVercel) {
+      app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+      });
+    }
   });
-}
 
-startServer();
+export default app;
